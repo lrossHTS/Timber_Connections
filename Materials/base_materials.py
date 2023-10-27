@@ -24,7 +24,8 @@ class Fixing:
 
 if __name__ == "__main__":
 
-    timber_test = Timber('GL28')
+    my_beam = Timber('GL28')
+    your_beam = Timber('GL24')
     steel_test = Steel('S355')
     fixing_test = Fixing('8.8')
 
