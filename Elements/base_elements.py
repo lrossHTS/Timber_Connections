@@ -28,13 +28,12 @@ class fin_plate(bm.Steel):
 
 class bolt(bm.Fixing):
     def __init__(self, dia, Grade):
-        super()__init__(Grade)
-
+        super().__init__(Grade)
         self.dia = dia
 
 class dowel(bm.Fixing):
     def __init__(self, dia, Grade):
-        super()__init__(Grade)
+        super().__init__(Grade)
 
         self.dia = dia
 
