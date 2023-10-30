@@ -15,11 +15,15 @@ class connection():
         self.a_2 = a_2
         self.a_3 = a_3
 
-        self.group_width = a_1 * (n_cols-1)
+        self.group_width = a_1 * (n_cols - 1)
+        self.group_height = a_2 * (n_rows - 1)
+        self.group_centre = (self.group_width/2, -self.group_height/2)
+
+        self.group_inertia = 0
 
         bolts = {}
 
-        xStart, yStart = 0,0
+        xStart, yStart = -self.group_width/2, self.group_height/2
         x, y = xStart, yStart
 
         k = 1 # counter
@@ -32,10 +36,15 @@ class connection():
                 self.bolt_ids.append(k)
                 col_id = j+1
 
-                bolts[str(k)] = {'x':x ,'y': y, 'row_id': row_id, 'load':{}}
+                # Distance of bolt from group centre / sum of squares of distances
+                dx = self.group_centre[0]-x
+                dy = self.group_centre[1]-y
+                r = (dx**2 + dy**2)**0.5
+                self.group_inertia += r**2
+
+                bolts[str(k)] = {'x':x ,'y': y, 'row_id': row_id, 'r': r, 'load':{}}
 
                 x += a_1
-
                 k += 1
             
             x = xStart
@@ -61,11 +70,15 @@ class connection():
     def decompose_load(self):
         for load_case in self.loads:
             V_ed = self.loads[load_case]['V_ed']
+            M_ed = self.loads[load_case]['M_ed']
 
             V_ed_i = V_ed / self.n_bolts
 
             for i in self.bolts:
-                self.bolts[i]['load'][load_case] = {'Ved': V_ed_i}
+                F_md = M_ed * self.bolts[i]['r'] / self.group_inertia
+
+
+                self.bolts[i]['load'][load_case] = {'F_vd': V_ed_i, 'F_md': F_md}
        
 if __name__ == "__main__":
 
