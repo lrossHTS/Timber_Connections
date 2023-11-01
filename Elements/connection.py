@@ -46,8 +46,8 @@ class connection():
                 col_id = j+1
 
                 # Distance of bolt from group centre / sum of squares of distances
-                dx = self.group_centre[0]-x
-                dy = self.group_centre[1]-y
+                dx = self.group_centre[0] - x
+                dy = self.group_centre[1] - y
                 r = (dx**2 + dy**2)**0.5
 
                 self.group_inertia += r**2

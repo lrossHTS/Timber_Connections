@@ -6,6 +6,16 @@ class section(bm.Timber):
 
         self.b = b
         self.d = d
+        self.k90 = None
+        
+    @property
+    def bolt_dia(self):
+        return bolt_dia
+    
+    @ bolt_dia.setter
+    def bolt_dia(self, value):
+        self.bolt_dia = value
+        self.k90 = 1.35 + 0.015* bolt_dia
 
 class beam(section):
     def __init__(self, span, Grade, b, d):
@@ -44,8 +54,12 @@ if __name__ == "__main__":
     span = 3000 
     b = 200
     d = 400
+    bolt_dia = 12
 
-    beam = beam(span, Grade, b, d)
+    sec = section(b,d,Grade)
+    sec.bolt_dia = 12
+
+    # beam.k90(12)
 
     pass
 
