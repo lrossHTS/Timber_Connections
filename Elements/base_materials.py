@@ -1,4 +1,5 @@
 import json
+import math as m
 from os import path
 
 def load_data(file_name):
@@ -15,6 +16,23 @@ class Timber:
         for key, value in properties.items():
             setattr(self, key, value)
 
+    def calc_f_h0k(self, dia):
+        ''' Calcs char embed str - eq 8.32'''
+        self.f_h0k = 0.082*(1 - 0.01*dia) * self.rho_k
+
+    def calc_k_90(self, dia):
+        ''' Calcs k90 - eq 8.33'''
+        f_types = {'softwood':1.35, 'LVL': 1.3, 'hardwood': 0.9}
+
+        # add condition to pick type
+        f = f_types['softwood']
+
+        self.k_90 = f + 0.015 * dia
+
+    def calc_f_hak(self, alpha):
+        ''' Calcs char embed str at angle to grain - eq 8.31'''
+        self.f_hak = self.f_h0k / (self.k_90*m.sin(alpha)**2 + m.cos(alpha)**2)
+        
 class Steel:
     def __init__(self, Grade):
         self.Grade = Grade

@@ -6,16 +6,6 @@ class section(bm.Timber):
 
         self.b = b
         self.d = d
-        self.k90 = None
-        
-    @property
-    def bolt_dia(self):
-        return bolt_dia
-    
-    @ bolt_dia.setter
-    def bolt_dia(self, value):
-        self.bolt_dia = value
-        self.k90 = 1.35 + 0.015* bolt_dia
 
 class beam(section):
     def __init__(self, span, Grade, b, d):
@@ -41,6 +31,10 @@ class bolt(bm.Fixing):
         super().__init__(Grade)
         self.dia = dia
 
+    @property
+    def M_yrk(self):
+        return 0.3 * self.f_ub * self.dia**2.6
+
 class dowel(bm.Fixing):
     def __init__(self, dia, Grade):
         super().__init__(Grade)
@@ -54,10 +48,11 @@ if __name__ == "__main__":
     span = 3000 
     b = 200
     d = 400
-    bolt_dia = 12
+    bolt_dia = 20
+    bolt_grade = '8.8'
 
-    sec = section(b,d,Grade)
-    sec.bolt_dia = 12
+    bolt_1 = bolt(bolt_dia, bolt_grade)
+    print(bolt_1.M_yrk)
 
     # beam.k90(12)
 

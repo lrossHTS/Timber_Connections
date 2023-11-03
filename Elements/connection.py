@@ -116,7 +116,13 @@ class connection():
 if __name__ == "__main__":
 
     fixing_grade = '8.8'
-    dia = 12
+    timber_grade = 'GL28h'
+    dia = 20
+
+    b = 200
+    d = 400
+
+    beam_1 = be.section(b, d, timber_grade)
 
     cxxn = connection(fixing_grade, dia)
 
@@ -125,6 +131,14 @@ if __name__ == "__main__":
     cxxn.apply_load('LC 1', 1, 50, 'Permanent')
 
     cxxn.decompose_load()
+
+    beam_1.calc_f_h0k(dia)
+
+    beam_1.calc_k_90(dia)
+
+    beam_1.calc_f_hak(m.radians(46))
+
+    
 
     pass
 
