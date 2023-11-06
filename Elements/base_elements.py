@@ -27,13 +27,30 @@ class fin_plate(bm.Steel):
         self.height = height
 
 class bolt(bm.Fixing):
-    def __init__(self, dia, Grade):
+    def __init__(self, dia, Grade, x, y, row_id, col_id, dx, dy, r):
         super().__init__(Grade)
-        self.dia = dia
+
+        self.dia = dia    
+        self.x = x
+        self.y = y
+        self.row_id = row_id
+        self.col_id = col_id 
+        self.dx = dx 
+        self.dy = dy
+        self.r = r
+        self.loads = {}
 
     @property
     def M_yrk(self):
         return 0.3 * self.f_ub * self.dia**2.6
+    
+    def store_decomp_ld(self, LC, F_x, F_y, F_res, alpha):
+        self.loads[LC]={
+            'F_x' : F_x,
+            'F_y' : F_y,
+            'F_res' : F_res,
+            'alpha' : alpha}
+
 
 class dowel(bm.Fixing):
     def __init__(self, dia, Grade):
@@ -53,8 +70,6 @@ if __name__ == "__main__":
 
     bolt_1 = bolt(bolt_dia, bolt_grade)
     print(bolt_1.M_yrk)
-
-    # beam.k90(12)
 
     pass
 

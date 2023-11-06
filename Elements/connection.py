@@ -5,8 +5,9 @@ import base_materials as bm
 
 class connection():
     def __init__(self, Grade, dia):
-        self.fixing = be.bolt(dia, Grade)
         self.loads = {}
+        self.fixing_grade = Grade
+        self.fixing_dia = dia
 
     def define_edges():
         self.edges = {'A': True, 'B':False, 'C':True, 'D':True}
@@ -55,7 +56,7 @@ class connection():
                 if r > self.r_max:
                     self.r_max = r
 
-                bolts[str(k)] = {'x':x ,'y': y, 'row_id': row_id, 'r': r, 'load':{}, 'dx':dx, 'dy':dy}
+                bolts[str(k)] = be.bolt(self.fixing_dia, self.fixing_grade, x, y, row_id, col_id, dx, dy, r)
 
                 x += a_1
                 k += 1
@@ -86,17 +87,17 @@ class connection():
         ''' Determine each load to each bolt'''
         n_bolts = self.n_bolts
         
-        for load_case in self.loads:
-            V_ed = self.loads[load_case]['V_ed']
-            M_ed = self.loads[load_case]['M_ed']
+        for LC in self.loads:
+            V_ed = self.loads[LC]['V_ed']
+            M_ed = self.loads[LC]['M_ed']
 
             V_ed_i = V_ed / n_bolts
 
             for i in self.bolts:
                 # Calc forces due to moment
-                F_m = M_ed * 1000 * self.bolts[i]['r'] / self.group_inertia
-                F_mx = F_m * self.bolts[i]['dy'] / self.r_max *-1
-                F_my = F_m * self.bolts[i]['dx'] / self.r_max
+                F_m = M_ed * 1000 * self.bolts[i].r / self.group_inertia
+                F_mx = F_m * self.bolts[i].dy / self.r_max *-1
+                F_my = F_m * self.bolts[i].dx / self.r_max
 
                 # Determine net components and resultant
                 F_x = F_mx
@@ -110,8 +111,10 @@ class connection():
                 
                 alpha = m.degrees(alpha)
 
-                self.bolts[i]['load'][load_case] = {'F_x': F_x, 'F_y': F_y, 'F_res':F_res, 'alpha': alpha}
-                print('Bolt {} - F_x = {} kN, F_y = {} kN, F_res = {} kN, alpha = {} deg'.format(i, round(F_x), round(F_y), round(F_res), round(alpha)))
+                self.bolts[i].store_decomp_ld(LC, F_x, F_y, F_res, alpha)
+
+                # self.bolts[i]['load'][load_case].= {'F_x': F_x, 'F_y': F_y, 'F_res':F_res, 'alpha': alpha}
+                # print('Bolt {} - F_x = {} kN, F_y = {} kN, F_res = {} kN, alpha = {} deg'.format(i, round(F_x), round(F_y), round(F_res), round(alpha)))
 
 if __name__ == "__main__":
 
@@ -137,8 +140,6 @@ if __name__ == "__main__":
     beam_1.calc_k_90(dia)
 
     beam_1.calc_f_hak(m.radians(46))
-
-    
 
     pass
 
