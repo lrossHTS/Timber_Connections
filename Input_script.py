@@ -1,41 +1,55 @@
 # Inputs required to drive connection designer
-
 # Geometry:
 # Supported member
-b = 280 # mm
-d = 520 # mm
+beam = {'b':280, 'd':520, 'grade':'GL28h','service_class':2, 'rho_k':425}
 
 # Fin plate: 
-t_pl = 12 # mm
-d_pl = 200 # mm
+finPl = {'t_pl':12, 'D':200, 'grade':'S355'}
 
-# Fixing:
-type = 'Bolted' # or 'Dowelled'
-dia = 20 # mm
-arrangement = 'Grid' # or 'Perimeter'
-n_bolt_rows = 3
-n_bolt_columns = 3
+# connection
+cnxn = {'type':'Bolted', 'd': 20, 'arrangement':'Grid', 'nrows':3, 'ncols':3, 'grade':8.8}
+bolt = {'grade':'8.8', 'f_ub':800, 'd':20, 'A_bt':450}
+bolt['washer_dia'] = min(12)
 
 # Actions:
-beam_shear = 30 # kN#
+load = {'LC':'LC1', 'V_ed':30, 'duration':'medium'}
 
-# Material Grades:
-bolts = '8.8'
-plate = '355'
-timber = 'GL28h'
+# -----------------------------------------#
+# Material constants:
+f_h0k = 0.082 * (1 - 0.01*cnxn['d']) * beam['rho_k']
+k_90 = 1.35 + 0.015*cnxn['d']
 
-# Environment
-service_class = 2 # or 1 or 3
+# Bolt constants: 
+M_rRK = 0.3 * bolt['f_ub'] * bolt['d']**2.6
 
-# Loading properties:
-load_duration = 'medium'
+F_ax_bolt = bolt['f_ub'] * bolt['A_bt']
+F_
 
-# Generate bolt positions
+F_axRk = min(F_ax_bolt, F_b_washer)
 
-
-# Calc load on each bolt
-
-
-# Check bolt geomtery check
+# -----------------------------------------#
 
 
+
+
+# -----------------------------------------#
+
+# -----------------------------------------#
+
+# -----------------------------------------#
+
+# -----------------------------------------#
+
+# -----------------------------------------#
+
+# -----------------------------------------#
+
+# -----------------------------------------#
+
+# -----------------------------------------#
+
+# -----------------------------------------#
+
+# -----------------------------------------#
+
+# -----------------------------------------#

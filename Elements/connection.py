@@ -113,9 +113,6 @@ class connection():
 
                 self.bolts[i].store_decomp_ld(LC, F_x, F_y, F_res, alpha)
 
-                # self.bolts[i]['load'][load_case].= {'F_x': F_x, 'F_y': F_y, 'F_res':F_res, 'alpha': alpha}
-                # print('Bolt {} - F_x = {} kN, F_y = {} kN, F_res = {} kN, alpha = {} deg'.format(i, round(F_x), round(F_y), round(F_res), round(alpha)))
-
 if __name__ == "__main__":
 
     fixing_grade = '8.8'
@@ -125,11 +122,19 @@ if __name__ == "__main__":
     b = 200
     d = 400
 
+    nrows = 2
+    ncols = 2
+
+    a_1 = 100 
+    a_2 = 100
+    a_3 = 50
+
     beam_1 = be.section(b, d, timber_grade)
 
     cxxn = connection(fixing_grade, dia)
 
-    cxxn.arrange_bolts(2 , 2, 100, 100, 50)
+    cxxn.arrange_bolts(nrows , ncols, a_1, a_2, a_3)
+    
     # cxxn.plot_bolts()
     cxxn.apply_load('LC 1', 1, 50, 'Permanent')
 
