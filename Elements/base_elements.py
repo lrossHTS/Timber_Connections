@@ -50,6 +50,12 @@ class bolt(bm.Fixing):
             'F_y' : F_y,
             'F_res' : F_res,
             'alpha' : alpha}
+        
+    def check_bolt_capacity(self, beam):
+
+        for LC in self.loads:
+            
+
 
 
 class dowel(bm.Fixing):

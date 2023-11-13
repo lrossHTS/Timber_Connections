@@ -31,7 +31,7 @@ class Timber:
 
     def calc_f_hak(self, alpha):
         ''' Calcs char embed str at angle to grain - eq 8.31'''
-        self.f_hak = self.f_h0k / (self.k_90*m.sin(alpha)**2 + m.cos(alpha)**2)
+        return self.f_h0k / (self.k_90*m.sin(alpha)**2 + m.cos(alpha)**2)
         
 class Steel:
     def __init__(self, Grade):
