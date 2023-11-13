@@ -9,30 +9,31 @@ beam = {'b':280, 'd':520, 'service_class':2}
 # Fin plate: 
 finPl = {'t_pl':12, 'D':200, 'grade':'S355'}
 
+t_1 = (beam['b'] - finPl['t_pl']) / 2
+
 # connection
-cnxn = {'type':'Bolted', 'arrangement':'Grid', 'n_rows':3, 'n_cols':3, 'grade':8.8}
-bolt = {'grade':'8.8', 'f_ub':800, 'd':20, 'A_bt':450}
+cnxn = {'type':'Bolted', 'arrangement':'Grid', 'n_rows':2, 'n_cols':2, 'grade':8.8}
 
 a_1, a_2, a_3 = 100, 100, 50
 
 # Actions:
-load = {'LC':'LC1', 'V_ed':50, 'M_ed':20, 'duration':'medium'}
+load = {'LC':'LC1', 'V_ed':10, 'M_ed':10, 'duration':'medium'}
+
+k_mod = 0.8
 
 S355 = bm.Steel('S355')
 timber = bm.Timber('GL28c')
-fxng = bm.Fixing('8.8')
+bolt = bm.Fixing(20, '8.8')
 
 # -----------------------------------------#
 # Material constants:
-timber.calc_f_h0k(bolt['d'])
-timber.calc_k_90(bolt['d'])
+timber.calc_f_h0k(bolt.d)
+timber.calc_k_90(bolt.d)
 
 # Bolt constants: 
-M_rRK = 0.3 * fxng.f_ub * bolt['d']**2.6
+bolt.calc_M_yRk
+bolt.calc_F_axRk
 
-F_ax_bolt = fxng.f_ub * bolt['A_bt']
-
-F_axRk = F_ax_bolt # To add washer/plate bearing capacity.
 # -----------------------------------------#
 # Place bolts 
 n_bolts = cnxn['n_rows'] * cnxn['n_cols']
@@ -92,8 +93,8 @@ for i in range(cnxn['n_rows']):
     y -= a_2
 # -----------------------------------------#
 # Decompose load and check local capacity at each fixing
-V_ed = load['V_ed']
-M_ed = load['M_ed']
+V_ed = load['V_ed'] / 2 # as in double shear
+M_ed = load['M_ed'] / 2 # as in double shear
 
 V_ed_i = V_ed / n_bolts
 
@@ -129,13 +130,41 @@ for i in bolts:
 
     f_hak = timber.calc_f_hak(alpha)
 
+    F_vRk = bolt.calc_F_vRK_dble_shear(t_1, f_hak)
+    F_vRd = bolt.calc_F_vRd(F_vRk, k_mod)
+
     #Capacity check:
-    if f_hak > F_res:
+    if F_vRd > F_res:
         check = 'OK'
     else:
         check = 'NOT OK'
 
-    print('Bolt {}: f_hak {} kN vs f_resultant {} kN -> {}'.format(i, round(f_hak,2), round(F_res,2), check))
+    print('Bolt {}: F_vRd {} kN vs F_resultant {} kN -> {}'.format(i, round(F_vRd,1), round(F_res,1), check))
+
+print('')
+
+# -----------------------------------------#
+# Check bolt row capacity
+# F_vRd parallel to grain
+f_hak_para = timber.calc_f_hak(0)
+F_vRk_para = bolt.calc_F_vRK_dble_shear(t_1, f_hak)
+F_vRd_para = bolt.calc_F_vRd(F_vRk, k_mod)
+
+for i in bolt_rows:
+    n = len(bolt_rows[i]['bolt_ids'])
+    n_eff = bolt.calc_n_ef(a_1, n)
+
+    F_vRd_row = n_eff * F_vRd_para
+    F_vEd_row = abs(bolt_rows[i]['F_h'])
+
+    if F_vRd_row > F_vEd_row:
+        check = 'OK'
+    else:
+        check = 'NOT OK'
+
+    print('Row {}: F_vRd of row: {} kN vs F_resultant {} kN -> {}'.format(i, round(F_vRd_row,1), round(F_vEd_row,1), check))
+
+
 
 pass
 
